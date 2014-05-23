@@ -14,22 +14,24 @@
   <link rel="stylesheet" type="text/css" href="css/bootstrap.css"/>
   
 </head>
-<body>
+<body ng-controller="SearchController as search">
     <div class="container">
         <div class="navbar navbar-default" role="navigation">
             <div class="container-fluid">
-                <form class="navbar-form navbar-default text-center" role="search">
+                <form name="searchForm" class="navbar-form navbar-default text-center" role="search" ng-submit="search.newSearch()" novalidate>
                     <div class="container-fluid">
                         <div class="form-group">
-                            <input type="text" class="form-control" placeholder="Search on Flickr">
+                            <input name="keywords" type="text" class="form-control" placeholder="Search on Flickr" ng-model="search.keywords" required>
                         </div>
                         <button type="submit" class="btn btn-default">Submit</button>
                     </div>
                 </form>
             </div>
         </div>
-        
-        <div id="main" ng-controller="SearchController as search">
+        <div id="error" class="alert alert-danger" ng-hide="!(search.submitted)" ng-show="search.submitted && searchForm.keywords.$error.required">
+           Please, enter the search keywords.
+        </div>
+        <div id="main">
             <div class="thumbnail picture" ng-repeat="product in search.products | offset: search.currentPage* search.itemsPerPage | limitTo: search.itemsPerPage">
                 <a href="{{product.flickr}}">
                     <img ng-src="{{product.img}}" alt="{{product.title}}">

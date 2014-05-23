@@ -2,7 +2,7 @@
 
 
 (function() {
-	var app = angular.module('flickr-search', []);
+	var app = angular.module('flickr-search', [ ]);
 	var pictures = [
         {
             title: 'Photo Walk Blue Hour at the Trump Tower',
@@ -163,11 +163,24 @@
       };
     });    
         
-	app.controller('SearchController', function(){
+	app.controller('SearchController', ['$http', function($http){
+        var search = this;
+        
+        this.keywords = "";
+        this.submitted = false;
 		this.products = pictures;
         this.itemsPerPage = 12;
         this.currentPage = 0;
 
+        this.newSearch = function() {
+            this.submitted = true;
+            if (this.keywords) {
+                alert(this.keywords);
+                this.submitted = false;
+            }
+            
+        };
+        
         this.range = function() {
             var rangeSize = 5;
             var ret = [];
@@ -213,7 +226,7 @@
             this.currentPage = n;
         };
 
-	});
+	}]);
 
 	
         
