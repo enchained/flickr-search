@@ -2,7 +2,8 @@
 <!--[if lt IE 7]> <html lang="en" ng-app="myApp" class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
 <!--[if IE 7]> <html lang="en" ng-app="myApp" class="no-js lt-ie9 lt-ie8"> <![endif]-->
 <!--[if IE 8]> <html lang="en" ng-app="myApp" class="no-js lt-ie9"> <![endif]-->
-<!--[if gt IE 8]><!--> <html lang="en" ng-app="flickr-search" class="no-js"> <!--<![endif]-->
+<!--[if gt IE 8]><!--> 
+<html lang="en" ng-app="flickr-search"> <!--<![endif]-->
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -10,36 +11,41 @@
   <meta name="description" content="Picture search that uses Flickr API">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" type="text/css" href="css/style.css"/>
-  <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css"/>
+  <link rel="stylesheet" type="text/css" href="css/bootstrap.css"/>
   
 </head>
 <body>
     <div class="container">
-      <form class="navbar-form navbar-left" role="search">
-        <div class="form-group">
-          Serch on Flickr: <input type="text" class="form-control" placeholder="Search">
+        <div class="navbar navbar-default" role="navigation">
+            <div class="container-fluid">
+                <form class="navbar-form navbar-default text-center" role="search">
+                    <div class="container-fluid">
+                        <div class="form-group">
+                            <input type="text" class="form-control" placeholder="Search on Flickr">
+                        </div>
+                        <button type="submit" class="btn btn-default">Submit</button>
+                    </div>
+                </form>
+            </div>
         </div>
-        <button type="submit" class="btn btn-default">Submit</button>
-      </form>
-
-      <div ng-controller="SearchController as search">
-<!--         <div class="thumbnail">
-          <img data-src="{{search.product.img}}" alt="{{search.product.title}}">
-          <div class="caption">
-            <h3>{{search.product.title}}</h3>
-            <p>{{search.product.title}}</p>
-          </div>
-        </div>  -->
         
-      </div>
-<a href="#" class="thumbnail">
-      <img data-src="http://totallyfrickinawesome.com/wp-content/uploads/2014/03/a94f9ddbaa4ec8ea829dc4a6ddac7b73-150x150.jpg" alt="...">
-    </a>
+        <div id="main" ng-controller="SearchController as search">
+            <div class="thumbnail picture" ng-repeat="product in search.products | offset: search.currentPage* search.itemsPerPage | limitTo: search.itemsPerPage">
+                <a href="{{product.flickr}}">
+                    <img ng-src="{{product.img}}" alt="{{product.title}}">
+                    <p class="caption">{{product.title}}</p>
+                </a>
+            </div>
+        </div>
+        
+        <div class="text-center">
+            <ul class="pagination pagination-lg">
+              <li ng-class="prevPageDisabled()"><a href ng-click="prevPage()">&laquo;</a></li>
+              <li ng-repeat="n in range()" ng-class="{active: n == currentPage}" ng-click="setPage(n)"><a href="#">{{n+1}}</a></li>
+              <li ng-class="nextPageDisabled()"><a href ng-click="nextPage()">&raquo;</a></li>
+            </ul>
+        </div>
     </div>
-
-
-
-
 
 
 

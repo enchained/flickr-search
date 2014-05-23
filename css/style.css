@@ -1,6 +1,14 @@
-#search-box {
-	padding-right: 15px;
-	padding-left: 15px;
-	margin-right: auto;
-	margin-left: auto;
+.picture {
+    display: inline-block !important; 
+    margin-bottom: 20px;
+    width: 100%; 
+}
+
+#main {
+    -moz-column-count: 4;
+    -moz-column-gap: 20px;
+    -webkit-column-count: 4;
+    -webkit-column-gap: 20px;
+    column-count: 4;
+    column-gap: 20px;
 }
