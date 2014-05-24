@@ -34,7 +34,7 @@
         <div id="main">
             <div class="thumbnail picture" ng-repeat="product in search.products">
                 <a href="{{product.flickr}}" target="_blank">
-                    <img data-src="holder.js/150x150" ng-src="{{product.img}}" alt="{{product.title}}">
+                    <img ng-src="{{product.img}}" alt="{{product.title}}">
                     <p class="caption">{{product.title}}</p>
                 </a>
             </div>
