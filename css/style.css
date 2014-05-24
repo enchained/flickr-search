@@ -12,3 +12,7 @@
     column-count: 4;
     column-gap: 20px;
 }
+
+#paginator {
+    position: absolute;
+}

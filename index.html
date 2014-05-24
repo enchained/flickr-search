@@ -17,7 +17,7 @@
 <body ng-controller="SearchController as search">
     <div class="container">
         <div class="navbar navbar-default" role="navigation">
-            <div class="container-fluid">
+            <div class="container">
                 <form name="searchForm" class="navbar-form navbar-default text-center" role="search" ng-submit="search.newSearch()" novalidate>
                     <div class="container-fluid">
                         <div class="form-group">
@@ -34,26 +34,28 @@
         <div id="main">
             <div class="thumbnail picture" ng-repeat="product in search.products">
                 <a href="{{product.flickr}}" target="_blank">
-                    <img ng-src="{{product.img}}" alt="{{product.title}}">
+                    <img data-src="holder.js/150x150" ng-src="{{product.img}}" alt="{{product.title}}">
                     <p class="caption">{{product.title}}</p>
                 </a>
             </div>
         </div>
         
-        <div class="text-center" ng-show="search.products.length > 0">
+        <div id="paginator" class="text-center" ng-show="search.started === true">
             <ul class="pagination pagination-lg">
-              <li ng-class="prevPageDisabled()"><a href ng-click="prevPage()">&laquo;</a></li>
-              <li ng-repeat="n in range()" ng-class="{active: n == currentPage}" ng-click="setPage(n)"><a href="#">{{n+1}}</a></li>
-              <li ng-class="nextPageDisabled()"><a href ng-click="nextPage()">&raquo;</a></li>
+              <li ng-class="{'disabled' : prevPageDisabled() }"><a href ng-click="search.fetchOnePage(search.currentPage - 1)">&laquo;</a></li>
+              <li ng-repeat="n in range(search.pageCount)" ng-class="{active: n == search.currentPage}" ng-click="newSearch(n)"><a href="#">{{n}}</a></li>
+              <li ng-class="{'disabled' : nextPageDisabled() }"><a href ng-click="search.fetchOnePage(search.currentPage + 1)">&raquo;</a></li>
             </ul>
         </div>
+        
     </div>
 
 
 
-  <script src="js/jquery-1.11.1.min.js"></script>
-  <script src="js/angular.min.js"></script>
-  <script src="js/app.js"></script>
+    <script src="js/jquery-1.11.1.min.js"></script>
+    <script src="js/holder.js"></script>
+    <script src="js/angular.min.js"></script>
+    <script src="js/app.js"></script>
 <!--
     <script type="text/javascript">
         function showThirdPartyData(dataArgument) { 
