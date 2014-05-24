@@ -1,3 +1,4 @@
+/*
 .picture {
     display: inline-block !important; 
     margin-bottom: 20px;
@@ -12,7 +13,20 @@
     column-count: 4;
     column-gap: 20px;
 }
+*/
 
-#paginator {
-    position: absolute;
+.caption {
+    white-space: nowrap; 
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.caption:hover {
+    white-space: normal; 
+    overflow: visible;
+}
+
+.picture {
+    height: 208px;
+    width: 285px;
 }

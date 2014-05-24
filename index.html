@@ -17,7 +17,7 @@
 <body ng-controller="SearchController as search">
     <div class="container">
         <div class="navbar navbar-default" role="navigation">
-            <div class="container">
+            <div class="container-fluid">
                 <form name="searchForm" class="navbar-form navbar-default text-center" role="search" ng-submit="search.newSearch()" novalidate>
                     <div class="container-fluid">
                         <div class="form-group">
@@ -31,7 +31,9 @@
         <div id="error" class="alert alert-danger" ng-hide="!(search.submitted)" ng-show="search.submitted && searchForm.keywords.$error.required">
            Please, enter the search keywords.
         </div>
-        <div id="main">
+        
+<!--
+        <div id="main" class="container-fluid">
             <div class="thumbnail picture" ng-repeat="product in search.products">
                 <a href="{{product.flickr}}" target="_blank">
                     <img ng-src="{{product.img}}" alt="{{product.title}}">
@@ -39,12 +41,24 @@
                 </a>
             </div>
         </div>
+-->
+        
+        <div class="container-fluid">
+            <div class="row" ng-repeat="row in search.rows">
+               <div class="thumbnail picture col-sm-3 col-xs-12"  ng-repeat="product in row">
+                    <a href="{{product.flickr}}" target="_blank">
+                        <img ng-src="{{product.img}}" alt="{{product.title}}">
+                        <p class="caption text-center">{{product.title}}</p>
+                    </a>     
+               </div>
+            </div>
+        </div>
         
         <div id="paginator" class="text-center" ng-show="search.started === true">
             <ul class="pagination pagination-lg">
-              <li ng-class="{'disabled' : prevPageDisabled() }"><a href ng-click="search.fetchOnePage(search.currentPage - 1)">&laquo;</a></li>
-              <li ng-repeat="n in range(search.pageCount)" ng-class="{active: n == search.currentPage}" ng-click="newSearch(n)"><a href="#">{{n}}</a></li>
-              <li ng-class="{'disabled' : nextPageDisabled() }"><a href ng-click="search.fetchOnePage(search.currentPage + 1)">&raquo;</a></li>
+              <li id="prev" ng-class="{'disabled' : prevPageDisabled() }"><a href ng-click="search.fetchOnePage(search.currentPage - 1, 'prev')">&laquo;</a></li>
+              <li ng-repeat="n in range(search.pageCount)" ng-class="{active: n == search.currentPage}" ng-click="search.fetchOnePage(n)"><a href="#">{{n}}</a></li>
+              <li id="next" ng-class="{'disabled' : nextPageDisabled() }"><a href ng-click="search.fetchOnePage(search.currentPage + 1, 'next')">&raquo;</a></li>
             </ul>
         </div>
         
