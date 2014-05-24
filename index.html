@@ -28,8 +28,8 @@
                 </form>
             </div>
         </div>
-        <div id="error" class="alert alert-danger" ng-hide="!(search.submitted)" ng-show="search.submitted && searchForm.keywords.$error.required">
-        Пожалуйста, введите поисковой запрос. / Please, enter the search keywords.
+        <div id="error" class="alert alert-danger" ng-hide="!(search.submitted)" ng-show="(search.submitted && searchForm.keywords.$error.required) || (search.product.length === 0)" ng-model="search.message">
+        {{search.message}}
         </div>
         
 
@@ -45,7 +45,7 @@
             </div>
         </div>
         
-        <div id="paginator" class="text-center" ng-show="search.started === true">
+        <div id="paginator" class="text-center" ng-show="search.showNav === true">
             <ul class="pagination pagination-lg">
               <li id="prev" ng-class="{'disabled' : prevPageDisabled() }"><a href ng-click="search.fetchOnePage(search.currentPage - 1, 'prev')">&laquo;</a></li>
               <li ng-repeat="n in range(search.pageCount)" ng-class="{active: n == search.currentPage}" ng-click="search.fetchOnePage(n)"><a href="#">{{n}}</a></li>

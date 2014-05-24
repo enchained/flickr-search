@@ -9,11 +9,14 @@
         search.keywords = "";
         search.submitted = false;
         
+        
         this.newSearch = function() {           
             search.submitted = true;
+            search.message = "Пожалуйста, введите поисковой запрос.";
             if (search.keywords) {
                 search.fetchOnePage(1);
-                search.started = true;
+                //console.log(search.products);
+                //search.showNav = true;
                 search.submitted = false;
             }    
         };
@@ -34,10 +37,14 @@
             $scope.failed = false;        
             $scope.isFetching = true;
             $.ajax({
-                url: "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=84c81a688848153a0fa4db04702b63fd&media=photos&extras=url_q&sort=relevance&per_page=12&format=json&jsoncallback=jsonFlickrFeed&tags=" + search.keywords + "&page=" + number,
+                url: "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=d70b688ec8e8dccee57c3fc1232c72b4&media=photos&extras=url_q&sort=relevance&per_page=12&format=json&jsoncallback=jsonFlickrFeed&tags=" + search.keywords + "&page=" + number,
                 dataType: "jsonp",
                 jsonpCallback: 'jsonFlickrFeed',            
                 success: function(feeds){
+//                    if (feeds.photos.photo.length === 0) {
+//                        search.showNav = false;
+//                        search.message = "По вашему запросу ничего не найдено.";
+//                    }
                     $scope.$apply(function(){
                         console.log(feeds);
                         angular.forEach(feeds.photos.photo, function(value, key) {
@@ -48,11 +55,12 @@
                             } );
 
                         });
-                        
+                        //console.log(feeds.photos.photo.length);
                         $scope.splitArray(4);
-    
+                        
                         search.currentPage = number;
                         search.pageCount = feeds.photos.pages;
+                        search.showNav = true;
                         $scope.isFetching = false;
                         $scope.failed = false;
                     });
