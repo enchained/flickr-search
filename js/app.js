@@ -4,11 +4,11 @@
 (function() {
     var app = angular.module('flickr-search', ['ui.bootstrap']);
     
-    app.controller('SearchController', function($scope){
+    app.controller('SearchController', function($scope) {
         var search = this;
         
         $scope.fieldChange = function() {
-                $scope.emptySubmitted = false;
+            $scope.emptySubmitted = false;
         };
                
 
@@ -17,7 +17,7 @@
             var i, j;
             $scope.pictureRows = [];
             for (i = 0, j = $scope.pictures.length; i < j; i += step) {
-                 $scope.pictureRows.push($scope.pictures.slice(i, i + step));
+                $scope.pictureRows.push($scope.pictures.slice(i, i + step));
             }
         };
         
@@ -25,13 +25,12 @@
             if (!$scope.keywords) {
                 return;
             }
-            
-            $scope.failed = false;        
+            $scope.failed = false;
             $.ajax({
                 url: "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=d70b688ec8e8dccee57c3fc1232c72b4&media=photos&extras=url_q&sort=relevance&per_page=12&format=json&jsoncallback=jsonFlickrFeed&tags="                    + $scope.keywords + "&page=" + pageNumber,
                 dataType: "jsonp",
-                jsonpCallback: 'jsonFlickrFeed',            
-                success: function(results){
+                jsonpCallback: 'jsonFlickrFeed',
+                success: function(results) {
                     
                     if (results.photos.photo.length === 0) {
                         $scope.showNav = false;
@@ -40,16 +39,16 @@
                         $scope.showMessage = true;
                         $scope.searchForm.$setPristine();
                         $scope.$apply();
-                        return;         
+                        return;
                     }
 
-                    $scope.$apply(function(){
+                    $scope.$apply(function() {
 //                        console.log(results);
                         angular.forEach(results.photos.photo, function(value, key) {
-                            $scope.pictures.push( {
+                            $scope.pictures.push({
                                 title: value.title,
                                 img: value.url_q,
-                                flickr: "http://www.flickr.com/photos/" + value.owner + "/" + value.id,
+                                flickr: "http://www.flickr.com/photos/" + value.owner + "/" + value.id
                             });
                         });
 
@@ -61,9 +60,9 @@
                         $scope.failed = false;
                     });
                 },
-                error: function(error){
-                    $scope.$apply(function(){
-                        $scope.failed = true;                                       
+                error: function(error) {
+                    $scope.$apply(function() {
+                        $scope.failed = true;
                     });
                 }
             });
@@ -80,21 +79,23 @@
 
         $scope.setPage = function (pageNumber) {
             $scope.pictures = [];
-            pageNumber = (pageNumber) ? pageNumber : $scope.currentPage;
-            $scope.fetchOnePage(pageNumber);
+            if (pageNumber) {
+                $scope.currentPage = pageNumber;
+            }
+            $scope.fetchOnePage($scope.currentPage);
         };
 
         $scope.$watch('currentPage', function() {
             $scope.setPage();
         });
         
-        $scope.newSearch = function() {  
+        $scope.newSearch = function() {
             $scope.showMessage = false;
             if ($scope.keywords === undefined) {
                 $scope.emptySubmitted = true;
             } else {
                 $scope.setPage(1);
-            };
+            }
         };
         
     });
