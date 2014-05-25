@@ -12,15 +12,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" type="text/css" href="css/style.css"/>
   <link rel="stylesheet" type="text/css" href="css/bootstrap.css"/>
+    <link rel="stylesheet" href="css/font-awesome.css">
   
 </head>
 <body ng-controller="SearchController as search">
     <div class="container">
+        
         <div class="navbar navbar-default" role="navigation">
             <div class="container-fluid">
                 <form name="searchForm" class="navbar-form navbar-default text-center" role="search" ng-submit="search.newSearch()" novalidate>
                     <div class="container-fluid">
-                        <div class="form-group">
+                        <div class="form-group" ng-class="{'has-error' : search.emptySubmitted && searchForm.keywords.$pristine }">
                             <input name="keywords" type="text" class="form-control" placeholder="Искать на Flickr" ng-model="search.keywords" required>
                         </div>
                         <button type="submit" class="btn btn-default">Найти</button>
@@ -28,11 +30,10 @@
                 </form>
             </div>
         </div>
-        <div id="error" class="alert alert-danger" ng-hide="!(search.submitted)" ng-show="(search.submitted && searchForm.keywords.$error.required) || (search.product.length === 0)" ng-model="search.message">
+        
+        <div id="error" class="alert alert-danger" ng-show="search.showMessage" ng-model="search.message">
         {{search.message}}
         </div>
-        
-
         
         <div class="container-fluid">
             <div class="row" ng-repeat="row in search.rows">
@@ -45,20 +46,64 @@
             </div>
         </div>
         
-        <div id="paginator" class="text-center" ng-show="search.showNav === true">
+<!--
+        <div id="paginator" class="text-center" ng-show="search.showNav">
             <ul class="pagination pagination-lg">
-              <li id="prev" ng-class="{'disabled' : prevPageDisabled() }"><a href ng-click="search.fetchOnePage(search.currentPage - 1, 'prev')">&laquo;</a></li>
-              <li ng-repeat="n in range(search.pageCount)" ng-class="{active: n == search.currentPage}" ng-click="search.fetchOnePage(n)"><a href="#">{{n}}</a></li>
-              <li id="next" ng-class="{'disabled' : nextPageDisabled() }"><a href ng-click="search.fetchOnePage(search.currentPage + 1, 'next')">&raquo;</a></li>
+                <li id="first" ng-class="{'disabled' : search.prevDisabled }"><a href ng-click="search.currentPage = 1" ng-disabled="search.prevDisabled">«</a></li>
+                <li id="prev" ng-class="{'disabled' : search.prevDisabled }"><a href ng-click="search.currentPage = search.currentPage - 1"  ng-disabled="search.prevDisabled">‹</a></li>
+                <li ng-repeat="n in range()" ng-class="{active: n == search.currentPage}" ng-click="currentPage = n"><a href="#">{{n}}</a></li>
+                <li id="next" ng-class="{'disabled' : search.nextDisabled }"><a href ng-click="search.currentPage = search.currentPage + 1" ng-disabled="search.nextDisabled">›</a></li>
+                <li id="last" ng-class="{'disabled' : search.nextDisabled }"><a href ng-click="search.currentPage = search.pageCount" ng-disabled="search.nextDisabled">»</a></li>
             </ul>
         </div>
+-->
         
     </div>
+    
+    <div>
+        
+        <pagination boundary-links="true" total-items="totalItems" ng-model="currentPage" max-size="maxSize" class="pagination-lg" num-pages="numPages" 
+                    previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;">></pagination>
+    </div>
+<!--
+    <style>
+        h1 {
+            text-align: center;
+        }
+        .pagination-large ul > li > a > i {
+            line-height: 17.5px;
+        }
+        .pagination ul > li > a, .pagination ul > li > span {
+            width: 20px;
+        }
+        
+    </style>
+    <ul id="pagination-demo" class="pagination-lg" ng-model="{{search.pageCount}}"></ul>
+    <div class="container well">
+        <h1>Page: <input type="number" ng-model="pagination.cur" min="1" max="{{pagination.total}}" class="span1" /></h1>
+        <ui-pagination cur="pagination.cur" total="pagination.total" display="9"></ui-pagination>
+        <ui-pagination cur="pagination.cur" total="pagination.total" display="{{pagination.display}}"></ui-pagination>
+        <div style="text-align: center;">Display: <input type="number" ng-model="pagination.display" min="1" max="{{pagination.total}}" class="span1" /></div>
+    </div>
+        <script type="text/javascript">
 
 
+        function TestController($scope) {
+            $scope.pagination = {
+                cur: 1,
+                total: 25,
+                display: 12
+            }
+        };
+    </script>
+-->
     <script src="js/jquery-1.11.1.min.js"></script>
+<!--    <script src="js/jquery.twbsPagination.min.js"></script>-->
+
     <script src="js/angular.min.js"></script>
+        <script src="js/ui-bootstrap-tpls-0.11.0.js"></script>
     <script src="js/app.js"></script>
+
 
 </body>
 </html>
