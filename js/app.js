@@ -37,6 +37,7 @@
                     if (results.photos.photo.length === 0) {
                         $scope.showNav = false;
                         $scope.message = "По запросу «" + newSearchKeywords + "» ничего не найдено.";
+                        $scope.pictureRows = [];
                         $scope.showMessage = true;
                         $scope.searchForm.$setPristine();
                         $scope.$apply();

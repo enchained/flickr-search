@@ -13,6 +13,14 @@
     width: 285px;
 }
 
+.thumbnail, p.caption {
+  margin-bottom : 0px !important;
+}
+
+.form-group input {
+    width:300px !important;
+}
+
 /*.pagination a {
     width: 54px;
 }*/
