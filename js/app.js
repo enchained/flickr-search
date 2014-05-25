@@ -27,6 +27,9 @@
             }
             $scope.failed = false;
             $scope.pictures = [];
+            if (newSearchKeywords !== $scope.searchKeywords) {
+                $scope.searchKeywords = newSearchKeywords;
+            }
 
             $.ajax({
                 url: "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=d70b688ec8e8dccee57c3fc1232c72b4&media=photos&extras=url_q&sort=relevance&per_page=12&format=json&jsoncallback=jsonFlickrFeed&tags="                    + newSearchKeywords + "&page=" + pageNumber,
@@ -82,41 +85,23 @@
             $scope.fetchOnePage($scope.currentPage);
         });
 
-        $scope.$watch('searchKeywords', function(newValue, oldValue) {
-            if (newValue !== oldValue) {
-                newSearchKeywords = $scope.searchKeywords;
-            }
-        });
-        
         $scope.newSearch = function() {
             $scope.showMessage = false;
             if ($scope.searchKeywords === undefined) {
                 $scope.emptySubmitted = true;
             } else {
                 if (newSearchKeywords && (newSearchKeywords !== $scope.searchKeywords)) {
-//                    prevSearchKeywords = newSearchKeywords;  
                     newSearchKeywords = $scope.searchKeywords;
                     if ($scope.currentPage !== 1) {
                         $scope.currentPage = 1;
                         return;
                     }
                     $scope.fetchOnePage($scope.currentPage);
-//                    $scope.$apply();
-                    
                 } else {
                     newSearchKeywords = $scope.searchKeywords;
                     $scope.fetchOnePage($scope.currentPage);
                     
-                }
-                
-
-//                if (newSearchKeywords !== $scope.searchKeywords) {
-//                    $scope.currentPage = 1;
-//                    newSearchKeywords = $scope.searchKeywords;
-//                } else {
-//                    $scope.fetchOnePage($scope.currentPage);
-//                }
-                
+                }      
             }
         };
         
