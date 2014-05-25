@@ -3,15 +3,15 @@
 
 (function() {
     var app = angular.module('flickr-search', ['ui.bootstrap']);
-    
+        
     app.controller('SearchController', function($scope) {
         var search = this;
+        var jsonFlickrFeed;
+        var newSearchKeywords;
         
         $scope.fieldChange = function() {
             $scope.emptySubmitted = false;
         };
-               
-
         
         $scope.splitArray = function(step) {
             var i, j;
@@ -22,20 +22,23 @@
         };
         
         $scope.fetchOnePage = function(pageNumber) {
-            if (!$scope.keywords) {
+            
+            if (!newSearchKeywords) {
                 return;
             }
             $scope.failed = false;
+            $scope.pictures = [];
+            $scope.pictureRows = [];
+            
             $.ajax({
-                url: "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=d70b688ec8e8dccee57c3fc1232c72b4&media=photos&extras=url_q&sort=relevance&per_page=12&format=json&jsoncallback=jsonFlickrFeed&tags="                    + $scope.keywords + "&page=" + pageNumber,
+                url: "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=d70b688ec8e8dccee57c3fc1232c72b4&media=photos&extras=url_q&sort=relevance&per_page=12&format=json&jsoncallback=jsonFlickrFeed&tags="                    + newSearchKeywords + "&page=" + pageNumber,
                 dataType: "jsonp",
                 jsonpCallback: 'jsonFlickrFeed',
                 success: function(results) {
                     
                     if (results.photos.photo.length === 0) {
                         $scope.showNav = false;
-                        $scope.message = "По запросу «" + $scope.keywords + "» ничего не найдено.";
-                        $scope.pictureRows = [];
+                        $scope.message = "По запросу «" + $scope.searchKeywords + "» ничего не найдено.";
                         $scope.showMessage = true;
                         $scope.searchForm.$setPristine();
                         $scope.$apply();
@@ -43,7 +46,6 @@
                     }
 
                     $scope.$apply(function() {
-//                        console.log(results);
                         angular.forEach(results.photos.photo, function(value, key) {
                             $scope.pictures.push({
                                 title: value.title,
@@ -77,24 +79,17 @@
             $scope.maxSize = 9;
         };
 
-        $scope.setPage = function (pageNumber) {
-            $scope.pictures = [];
-            if (pageNumber) {
-                $scope.currentPage = pageNumber;
-            }
+        $scope.$watch('currentPage', function(newValue, oldValue) {
             $scope.fetchOnePage($scope.currentPage);
-        };
-
-        $scope.$watch('currentPage', function() {
-            $scope.setPage();
         });
         
         $scope.newSearch = function() {
             $scope.showMessage = false;
-            if ($scope.keywords === undefined) {
+            if ($scope.searchKeywords === undefined) {
                 $scope.emptySubmitted = true;
             } else {
-                $scope.setPage(1);
+                newSearchKeywords = $scope.searchKeywords;
+                $scope.currentPage = 1;
             }
         };
         

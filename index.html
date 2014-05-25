@@ -21,7 +21,7 @@
                 <form name="searchForm" class="navbar-form navbar-default text-center" role="search" ng-submit="newSearch()" novalidate>
                     <div class="container-fluid">
                         <div class="form-group" ng-class="{'has-error' : emptySubmitted && searchForm.keywords.$error.required }">
-                            <input name="keywords" type="text" class="form-control" placeholder="Искать на Flickr" ng-model="keywords" ng-change="fieldChange()" required>
+                            <input name="keywords" type="text" class="form-control" placeholder="Искать на Flickr" ng-model="searchKeywords" ng-change="fieldChange()" required>
                         </div>
                         <button type="submit" class="btn btn-default">Найти</button>
                     </div>
@@ -34,7 +34,7 @@
         </div>
         
         <div class="container-fluid">
-            <div class="row" ng-repeat="row in pictureRows">
+            <div class="row" ng-repeat="row in pictureRows | limitTo: 3">
                <div class="thumbnail picture col-sm-3 col-xs-12"  ng-repeat="picture in row">
                     <a href="{{picture.flickr}}" target="_blank">
                         <img ng-src="{{picture.img}}" alt="{{picture.title}}">
