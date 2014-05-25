@@ -72,9 +72,11 @@
                         });
 
                         $scope.splitArray(4);
-                        search.pageCount = results.photos.pages;
+                        //search.pageCount = results.photos.pages;
+                        $scope.itemsPerPage = results.photos.perpage;
+                        $scope.totalItems = parseInt(results.photos.total);
                         search.showNav = true;
-                        $scope.fillNav($scope.currentPage, search.pageCount);
+                        $scope.fillNav($scope.currentPage, $scope.totalItems, $scope.itemsPerPage);
                         $scope.failed = false;
                     });
                 },
@@ -89,8 +91,13 @@ $scope.$watch('currentPage', function (page) {
     
     $scope.setPage(page);
   });        
-$scope.fillNav = function(currentPage, totalItems) {
-
+$scope.fillNav = function(currentPage, totalItems, itemsPerPage) {
+//    alert(totalItems);
+    if (totalItems > 4020) {
+        
+        totalItems = 4020; //for some reason even if there is thousands of pages in he Flickr response, it shows only the first 335, after that iteates 335 page over and overю 4020 is 335 times 12.
+    }
+    $scope.itemsPerPage = itemsPerPage;
   $scope.totalItems = totalItems;
 //  $scope.currentPage = currentPage;
 
@@ -110,31 +117,31 @@ $scope.fillNav = function(currentPage, totalItems) {
 };
 
         
-        
-                $scope.range = function () {
-                    var display, delta, start, end;
-                    display = 9;
-                    delta = Math.floor(display / 2);
-                    start = $scope.currentPage - delta;
-                    if (start < 1) {
-                        start = 1;
-                    }
-                    end = start + display - 1;
-                    if (end > search.pageCount) {
-                        end = search.pageCount;
-                        start = end - (display - 1);
-                        if (start < 1) {
-                            start = 1;
-                        }
-                    }
-
-                    $scope.pages = [];
-                    for (var i = start; i <= end; ++i) {
-                        $scope.pages.push(i);
-                    }
-                    console.log($scope.pages);
-                    return $scope.pages;
-                };        
+//        
+//                $scope.range = function () {
+//                    var display, delta, start, end;
+//                    display = 9;
+//                    delta = Math.floor(display / 2);
+//                    start = $scope.currentPage - delta;
+//                    if (start < 1) {
+//                        start = 1;
+//                    }
+//                    end = start + display - 1;
+//                    if (end > search.pageCount) {
+//                        end = search.pageCount;
+//                        start = end - (display - 1);
+//                        if (start < 1) {
+//                            start = 1;
+//                        }
+//                    }
+//
+//                    $scope.pages = [];
+//                    for (var i = start; i <= end; ++i) {
+//                        $scope.pages.push(i);
+//                    }
+//                    console.log($scope.pages);
+//                    return $scope.pages;
+//                };        
 //        $scope.range = function() {
 //            var rangeSize = 9;
 //            var ret = [];
