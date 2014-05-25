@@ -32,7 +32,7 @@
             }
 
             $.ajax({
-                url: "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=d70b688ec8e8dccee57c3fc1232c72b4&media=photos&extras=url_q&sort=relevance&per_page=12&format=json&jsoncallback=jsonFlickrFeed&tags="                    + newSearchKeywords + "&page=" + pageNumber,
+                url: "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=d70b688ec8e8dccee57c3fc1232c72b4&media=photos&extras=url_q&sort=relevance&per_page=12&format=json&jsoncallback=jsonFlickrFeed&tags="                    + encodeURIComponent(newSearchKeywords) + "&page=" + pageNumber,
                 dataType: "jsonp",
                 jsonpCallback: 'jsonFlickrFeed',
                 success: function(results) {
