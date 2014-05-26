@@ -53,9 +53,7 @@
             }
             
             // When keywords entered, but not submitted, return current search keywords on page turn
-            if (currentResultKeywords !== $scope.typedInKeywords) {
                 $scope.typedInKeywords = currentResultKeywords;
-            }
             
             r = {
                 searchMethod: "flickr.photos.search",
