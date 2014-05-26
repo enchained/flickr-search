@@ -53,7 +53,7 @@
         
         <script type="text/ng-template" id="alert-message.html">
             <div id="error" class="alert alert-danger alert-dismissable" ng-show="searchFailed" ng-model="message">
-                <button type="button" class="close" data-dismiss="alert" ng-click="searchFailed = false" aria-hidden="true">&times;</button>
+                <button type="button" class="close" ng-click="searchFailed = false" aria-hidden="true">&times;</button>
                 {{message}}
             </div>
         </script>
