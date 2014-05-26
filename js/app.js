@@ -4,8 +4,7 @@
 (function() {
     var app = angular.module('flickr-search', ['ui.bootstrap']);
         
-    app.controller('SearchController', function($scope) {
-
+    app.controller('SearchController', ['$scope', '$http', function ($scope, $http) {
         var newSearchKeywords;
         
         $scope.fieldChange = function() {
@@ -21,7 +20,6 @@
         };
         
         $scope.fetchOnePage = function(pageNumber) {
-            var jsonFlickrFeed;
             if (!newSearchKeywords) {
                 return;
             }
@@ -31,44 +29,43 @@
                 $scope.searchKeywords = newSearchKeywords;
             }
 
-            $.ajax({
-                url: "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=d70b688ec8e8dccee57c3fc1232c72b4&media=photos&extras=url_q&sort=relevance&per_page=12&format=json&jsoncallback=jsonFlickrFeed&tags="                    + encodeURIComponent(newSearchKeywords) + "&page=" + pageNumber,
-                dataType: "jsonp",
-                jsonpCallback: 'jsonFlickrFeed',
-                success: function(results) {
-                    
-                    if (results.photos.photo.length === 0) {
-                        $scope.showNav = false;
-                        $scope.message = "По запросу «" + newSearchKeywords + "» ничего не найдено.";
-                        $scope.pictureRows = [];
-                        $scope.showMessage = true;
-                        $scope.searchForm.$setPristine();
-                        $scope.$apply();
-                        return;
-                    }
-
-                    $scope.$apply(function() {
-                        angular.forEach(results.photos.photo, function(value, key) {
-                            $scope.pictures.push({
-                                title: value.title,
-                                img: value.url_q,
-                                flickr: "http://www.flickr.com/photos/" + value.owner + "/" + value.id
-                            });
-                        });
-
-                        $scope.splitArray(4);
-                        $scope.itemsPerPage = results.photos.perpage;
-                        $scope.totalItems = parseInt(results.photos.total);
-                        $scope.showNav = true;
-                        $scope.fillNav($scope.currentPage, $scope.totalItems, $scope.itemsPerPage);
-                        $scope.failed = false;
-                    });
-                },
-                error: function(error) {
-                    $scope.$apply(function() {
-                        $scope.failed = true;
-                    });
+            $scope.url = "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=d70b688ec8e8dccee57c3fc1232c72b4&media=photos&extras=url_q&sort=relevance&per_page=12&format=json&jsoncallback=JSON_CALLBACK&tags="
+            + encodeURIComponent(newSearchKeywords) + "&page=" + pageNumber;
+            
+            $http.jsonp($scope.url)
+            .success(function(results, status, headers, config) {
+                if (results.photos.photo.length === 0) {
+                    $scope.showNav = false;
+                    $scope.message = "По запросу «" + newSearchKeywords + "» ничего не найдено.";
+                    $scope.pictureRows = [];
+                    $scope.showMessage = true;
+                    $scope.searchForm.$setPristine();
+                    $scope.$apply();
+                    return;
                 }
+                angular.forEach(results.photos.photo, function(value, key) {
+                    $scope.pictures.push({
+                        title: value.title,
+                        img: value.url_q,
+                        flickr: "http://www.flickr.com/photos/" + value.owner + "/" + value.id
+                    });
+                });
+
+                $scope.splitArray(4);
+                $scope.itemsPerPage = results.photos.perpage;
+                $scope.totalItems = parseInt(results.photos.total);
+                $scope.showNav = true;
+                $scope.fillNav($scope.currentPage, $scope.totalItems, $scope.itemsPerPage);
+                $scope.failed = false;
+            }).error(function(data, status, headers, config) {
+                //there is no error handling for JSONP calls, so it is impossible to get error codes
+                $scope.showNav = false;
+                $scope.message = "Произошла ошибка. Flickr API недоступен.";
+                $scope.pictureRows = [];
+                $scope.showMessage = true;
+                $scope.searchForm.$setPristine();
+                $scope.failed = true;
+                return;
             });
         };
                 
@@ -92,11 +89,17 @@
             } else {
                 if (newSearchKeywords && (newSearchKeywords !== $scope.searchKeywords)) {
                     newSearchKeywords = $scope.searchKeywords;
-                    if ($scope.currentPage !== 1) {
+//                    if ($scope.currentPage !== 1) {
                         $scope.currentPage = 1;
                         return;
-                    }
+//                    }
                     $scope.fetchOnePage($scope.currentPage);
+                } else if (newSearchKeywords && (newSearchKeywords === $scope.searchKeywords)) {
+                    newSearchKeywords = $scope.searchKeywords;
+//                    if ($scope.currentPage !== 1) {
+                        $scope.currentPage = 1;
+                        return;
+//                    }
                 } else {
                     newSearchKeywords = $scope.searchKeywords;
                     $scope.fetchOnePage($scope.currentPage);
@@ -105,6 +108,6 @@
             }
         };
         
-    });
+    }]);
     
 })();
