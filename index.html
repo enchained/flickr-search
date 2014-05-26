@@ -44,12 +44,10 @@
             </div>
         </div>
         
-        <div class="text-center" ng-show="showNav">        
-            <pagination boundary-links="true" total-items="totalItems" ng-model="currentPage" ng-init='currentPage = 1' max-size="maxSize" class="pagination-lg" items-per-page="itemsPerPage"
-                        previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;">>
-            </pagination>
-        </div>
-        
+        <pagination ng-show="showNav" boundary-links="true" total-items="totalItems" ng-model="currentPage" ng-init='currentPage = 1' max-size="maxSize" items-per-page="itemsPerPage"
+                    previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;">>
+        </pagination>
+    
     </div>
 
     <script src="js/angular.min.js"></script>
