@@ -24,7 +24,7 @@
             
             <search-results-grid></search-results-grid>
 
-            <pagination ng-show="showNav" boundary-links="true" total-items="totalItems" ng-model="currentPage" ng-init='currentPage = 1' max-size="maxSize" items-per-page="itemsPerPage"
+            <pagination ng-show="showNav" boundary-links="true" total-items="totalResults" ng-model="currentPage" max-size="maxNavLength" items-per-page="resultsPerPage"
                         previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;">>
             </pagination>
 
@@ -41,8 +41,8 @@
                 <div class="container-fluid">
                     <form name="searchForm" class="navbar-form navbar-default text-center" role="search" ng-submit="newSearch()" novalidate>
                         <div class="container-fluid">
-                            <div class="form-group" ng-class="{'has-error' : emptySubmitted && searchForm.keywords.$error.required }">
-                                <input name="keywords" type="text" class="form-control" placeholder="Искать на Flickr" ng-model="searchKeywords" ng-change="fieldChange()" required>
+                            <div class="form-group" ng-class="{'has-error' : emptyStringSubmitted && searchForm.keywords.$error.required }">
+                                <input name="keywords" type="text" class="form-control" placeholder="Искать на Flickr" ng-model="typedInKeywords" ng-change="clearHighlightWarning()" required>
                             </div>
                             <button type="submit" class="btn btn-default">Найти</button>
                         </div>
@@ -52,8 +52,8 @@
         </script>
         
         <script type="text/ng-template" id="alert-message.html">
-            <div id="error" class="alert alert-danger alert-dismissable" ng-show="showMessage" ng-model="message">
-                <button type="button" class="close" data-dismiss="alert" ng-click="showMessage = false" aria-hidden="true">&times;</button>
+            <div id="error" class="alert alert-danger alert-dismissable" ng-show="searchFailed" ng-model="message">
+                <button type="button" class="close" data-dismiss="alert" ng-click="searchFailed = false" aria-hidden="true">&times;</button>
                 {{message}}
             </div>
         </script>

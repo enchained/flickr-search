@@ -3,47 +3,99 @@
 
 (function() {
     var app = angular.module('flickr-search', ['ui.bootstrap', 'template-directives']);
-    
-
-    
+   
     app.controller('SearchController', ['$scope', '$http', function ($scope, $http) {
-        var newSearchKeywords;
+        var currentResultKeywords, prevResultKeywords;
         
-        $scope.fieldChange = function() {
-            $scope.emptySubmitted = false;
-        };
         
-        $scope.splitArray = function(step) {
-            var i, j;
-            $scope.pictureRows = [];
-            for (i = 0, j = $scope.pictures.length; i < j; i += step) {
-                $scope.pictureRows.push($scope.pictures.slice(i, i + step));
+        // Setting current page anywhere will trigger search results loading
+        $scope.$watch('currentPage', function() {
+            $scope.loadSelectedPage($scope.currentPage);
+        });
+
+        
+        $scope.newSearch = function() {
+            
+            // If submitted an empty input, it will highlight in red
+            if ($scope.typedInKeywords === undefined) {
+                $scope.emptyStringSubmitted = true;
+                return;
+            } 
+            
+            prevResultKeywords = currentResultKeywords;
+            currentResultKeywords = $scope.typedInKeywords;
+            
+            // If it is not the first search, should manually trigger first page loading if it is already current page
+            if (prevResultKeywords) {
+                if ($scope.currentPage === 1) {
+                    $scope.loadSelectedPage(1);
+                    return;
+                } 
             }
+            
+            // If it is the very first search, setting the first page to trigger loading
+            $scope.currentPage = 1;           
         };
         
-        $scope.fetchOnePage = function(pageNumber) {
-            if (!newSearchKeywords) {
+        
+        $scope.clearHighlightWarning = function() {
+            $scope.emptyStringSubmitted = false;
+        };
+        
+        
+        $scope.loadSelectedPage = function(pageNumber) {
+            
+            var r; // Flickr API Request object
+            $scope.resultsPerPage = 12;
+            
+            if (!currentResultKeywords) {
                 return;
             }
-            $scope.failed = false;
-            $scope.pictures = [];
-            if (newSearchKeywords !== $scope.searchKeywords) {
-                $scope.searchKeywords = newSearchKeywords;
+            
+            // When keywords entered, but not submitted, return current search keywords on page turn
+            if (currentResultKeywords !== $scope.typedInKeywords) {
+                $scope.typedInKeywords = currentResultKeywords;
             }
-
-            $scope.url = "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=d70b688ec8e8dccee57c3fc1232c72b4&media=photos&extras=url_q&sort=relevance&per_page=12&format=json&jsoncallback=JSON_CALLBACK&tags="
-            + encodeURIComponent(newSearchKeywords) + "&page=" + pageNumber;
+            
+            r = {
+                searchMethod: "flickr.photos.search",
+                tags: encodeURIComponent(currentResultKeywords),
+                apiKey: "d70b688ec8e8dccee57c3fc1232c72b4",
+                perPage: $scope.resultsPerPage,
+                extras: "url_q",
+                format: "json",
+                jsoncallback: "JSON_CALLBACK",
+                media: "photos",
+                sorting: "relevance"
+                
+            }
+            
+            $scope.searchFailed = false;
+            $scope.pictures = [];
+            $scope.url = "https://api.flickr.com/services/rest/"
+                        +"?method=" + r.searchMethod
+                        + "&api_key=" + r.apiKey
+                        + "&media="+ r.media
+                        + "&extras=" + r.extras
+                        + "&sort=" + r.sorting
+                        + "&per_page=" + r.perPage
+                        + "&format=" + r.format
+                        + "&jsoncallback=" + r.jsoncallback
+                        + "&tags=" + r.tags
+                        + "&page=" + pageNumber;
             
             $http.jsonp($scope.url)
             .success(function(results, status, headers, config) {
                 if (results.photos.photo.length === 0) {
                     $scope.showNav = false;
-                    $scope.message = "По запросу «" + newSearchKeywords + "» ничего не найдено.";
+                    $scope.message = "По запросу «" + currentResultKeywords + "» ничего не найдено.";
                     $scope.pictureRows = [];
-                    $scope.showMessage = true;
+                    $scope.searchFailed = true;
                     $scope.searchForm.$setPristine();
                     return;
                 }
+                
+                // Fill pictures array with search results
                 angular.forEach(results.photos.photo, function(value, key) {
                     $scope.pictures.push({
                         title: value.title,
@@ -51,57 +103,38 @@
                         flickr: "http://www.flickr.com/photos/" + value.owner + "/" + value.id
                     });
                 });
-
-                $scope.splitArray(4);
-                $scope.itemsPerPage = results.photos.perpage;
-                $scope.totalItems = parseInt(results.photos.total);
+                
+                // AngularJS needs 2d array to fill Bootstrap grid
+                $scope.generateOutputGrid($scope.pictures);
+                
+                $scope.totalResults = parseInt(results.photos.total);
+                // For some reason even if there is thousands of pages in the Flickr response, it shows only the first 335, after that iterates page number 335 over and over. 4020 is 335 times 12.
+                if ($scope.totalResults > 4020) {
+                    $scope.totalResults = 4020;
+                }
+                
+                $scope.maxNavLength = 9;
                 $scope.showNav = true;
-                $scope.fillNav($scope.currentPage, $scope.totalItems, $scope.itemsPerPage);
-                $scope.failed = false;
+                $scope.searchFailed = false;
+                
             }).error(function(data, status, headers, config) {
-                //there is no error handling for JSONP calls, so it is impossible to get error codes
+                // There is no error handling for JSONP calls, so it is impossible to get error codes
                 $scope.showNav = false;
                 $scope.message = "Произошла ошибка. Flickr API недоступен.";
                 $scope.pictureRows = [];
-                $scope.showMessage = true;
                 $scope.searchForm.$setPristine();
-                $scope.failed = true;
+                $scope.searchFailed = true;
                 return;
             });
         };
-                
-        $scope.fillNav = function(currentPage, totalItems, itemsPerPage) {
-            //for some reason even if there is thousands of pages in he Flickr response, it shows only the first 335, after that iteates 335 page over and overю 4020 is 335 times 12.
-            totalItems = (totalItems > 4020) ? 4020 : totalItems;
-            
-            $scope.itemsPerPage = itemsPerPage;
-            $scope.totalItems = totalItems;
-            $scope.maxSize = 9;
-        };
-
-        $scope.$watch('currentPage', function(newValue, oldValue) {
-            $scope.fetchOnePage($scope.currentPage);
-        });
-
-        $scope.newSearch = function() {
-            $scope.showMessage = false;
-            if ($scope.searchKeywords === undefined) {
-                $scope.emptySubmitted = true;
-            } else {
-                if (newSearchKeywords && (newSearchKeywords !== $scope.searchKeywords)) {
-                    newSearchKeywords = $scope.searchKeywords;
-                    if ($scope.currentPage !== 1) {
-                        $scope.currentPage = 1;
-                        return;
-                    }
-                    $scope.fetchOnePage($scope.currentPage);
-                } else if (newSearchKeywords && (newSearchKeywords === $scope.searchKeywords)) {
-                    $scope.currentPage = 1;
-                    return;
-                } else {
-                    newSearchKeywords = $scope.searchKeywords;
-                    $scope.fetchOnePage($scope.currentPage);
-                }      
+        
+        // AngularJS needs 2d array to fill Bootstrap grid
+        $scope.generateOutputGrid = function(picturesArr) {
+            var i, j, row, columns = 4;
+            $scope.pictureRows = [];
+            for (i = 0, j = picturesArr.length; i < j; i += columns) {
+                row = picturesArr.slice(i, i + columns);
+                $scope.pictureRows.push(row);
             }
         };
         
