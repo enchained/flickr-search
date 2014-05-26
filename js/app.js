@@ -2,8 +2,10 @@
 
 
 (function() {
-    var app = angular.module('flickr-search', ['ui.bootstrap']);
-        
+    var app = angular.module('flickr-search', ['ui.bootstrap', 'template-directives']);
+    
+
+    
     app.controller('SearchController', ['$scope', '$http', function ($scope, $http) {
         var newSearchKeywords;
         
@@ -94,19 +96,15 @@
                     }
                     $scope.fetchOnePage($scope.currentPage);
                 } else if (newSearchKeywords && (newSearchKeywords === $scope.searchKeywords)) {
-                    newSearchKeywords = $scope.searchKeywords;
-//                    if ($scope.currentPage !== 1) {
-                        $scope.currentPage = 1;
-                        return;
-//                    }
+                    $scope.currentPage = 1;
+                    return;
                 } else {
                     newSearchKeywords = $scope.searchKeywords;
                     $scope.fetchOnePage($scope.currentPage);
-                    
                 }      
             }
         };
         
     }]);
-    
+
 })();

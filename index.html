@@ -4,56 +4,72 @@
 <!--[if IE 8]> <html lang="en" ng-app="myApp" class="no-js lt-ie9"> <![endif]-->
 <!--[if gt IE 8]><!--> 
 <html lang="en" ng-app="flickr-search"> <!--<![endif]-->
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Flickr Search</title>
-  <meta name="description" content="Picture search that uses Flickr API">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" type="text/css" href="css/style.css"/>
-  <link rel="stylesheet" type="text/css" href="css/bootstrap.css"/>
-</head>
-<body ng-controller="SearchController as search">
-    <div class="container">
-        
-        <div class="navbar navbar-default" role="navigation">
-            <div class="container-fluid">
-                <form name="searchForm" class="navbar-form navbar-default text-center" role="search" ng-submit="newSearch()" novalidate>
-                    <div class="container-fluid">
-                        <div class="form-group" ng-class="{'has-error' : emptySubmitted && searchForm.keywords.$error.required }">
-                            <input name="keywords" type="text" class="form-control" placeholder="Искать на Flickr" ng-model="searchKeywords" ng-change="fieldChange()" required>
-                        </div>
-                        <button type="submit" class="btn btn-default">Найти</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-        
-        <div id="error" class="alert alert-danger alert-dismissable" ng-show="showMessage" ng-model="message">
-            <button type="button" class="close" data-dismiss="alert" ng-click="showMessage = false" aria-hidden="true">&times;</button>
-            {{message}}
-        </div>
-        
-        <div class="container-fluid">
-            <div class="row" ng-repeat="row in pictureRows | limitTo: 3">
-               <div class="thumbnail picture col-sm-3 col-xs-12"  ng-repeat="picture in row">
-                    <a href="{{picture.flickr}}" target="_blank">
-                        <img ng-src="{{picture.img}}" alt="{{picture.title}}">
-                        <p class="caption text-center">{{picture.title}}</p>
-                    </a>     
-               </div>
-            </div>
-        </div>
-        
-        <pagination ng-show="showNav" boundary-links="true" total-items="totalItems" ng-model="currentPage" ng-init='currentPage = 1' max-size="maxSize" items-per-page="itemsPerPage"
-                    previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;">>
-        </pagination>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Flickr Search</title>
+        <meta name="description" content="Picture search that uses Flickr API">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" type="text/css" href="css/style.css"/>
+        <link rel="stylesheet" type="text/css" href="css/bootstrap.css"/>
+    </head>
     
-    </div>
+    <body ng-controller="SearchController as search">
+        
+        <div class="container">
 
-    <script src="js/angular.min.js"></script>
-    <script src="js/app.js"></script>
-    <script src="js/ui-bootstrap-tpls-0.11.0.js"></script>
+            <search-bar></search-bar>
+            
+            <alert-message></alert-message>
+            
+            <search-results-grid></search-results-grid>
 
-</body>
+            <pagination ng-show="showNav" boundary-links="true" total-items="totalItems" ng-model="currentPage" ng-init='currentPage = 1' max-size="maxSize" items-per-page="itemsPerPage"
+                        previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;">>
+            </pagination>
+
+        </div>
+
+        <script src="js/angular.min.js"></script>
+        <script src="js/app.js"></script>
+        <script src="js/templates.js"></script>
+        <script src="js/ui-bootstrap-tpls-0.11.0.js"></script>
+        
+        <!-- Templates will be loaded to angularJS cache. This will allow to use custom directives as templates with file:// protocol.-->
+        <script type="text/ng-template" id="search-bar.html">
+            <div class="navbar navbar-default" role="navigation">
+                <div class="container-fluid">
+                    <form name="searchForm" class="navbar-form navbar-default text-center" role="search" ng-submit="newSearch()" novalidate>
+                        <div class="container-fluid">
+                            <div class="form-group" ng-class="{'has-error' : emptySubmitted && searchForm.keywords.$error.required }">
+                                <input name="keywords" type="text" class="form-control" placeholder="Искать на Flickr" ng-model="searchKeywords" ng-change="fieldChange()" required>
+                            </div>
+                            <button type="submit" class="btn btn-default">Найти</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </script>
+        
+        <script type="text/ng-template" id="alert-message.html">
+            <div id="error" class="alert alert-danger alert-dismissable" ng-show="showMessage" ng-model="message">
+                <button type="button" class="close" data-dismiss="alert" ng-click="showMessage = false" aria-hidden="true">&times;</button>
+                {{message}}
+            </div>
+        </script>
+        
+        <script type="text/ng-template" id="search-results-grid.html">
+            <div class="container-fluid">
+                <div class="row" ng-repeat="row in pictureRows | limitTo: 3">
+                   <div class="thumbnail picture col-sm-3 col-xs-12"  ng-repeat="picture in row">
+                        <a href="{{picture.flickr}}" target="_blank">
+                            <img ng-src="{{picture.img}}" alt="{{picture.title}}">
+                            <p class="caption text-center">{{picture.title}}</p>
+                        </a>     
+                   </div>
+                </div>
+            </div>
+        </script>
+        
+    </body>
 </html>
