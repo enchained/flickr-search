@@ -45,7 +45,6 @@
         
         $scope.loadSelectedPage = function(pageNumber) {
             
-            var r; // Flickr API Request object
             $scope.resultsPerPage = 12;
             
             if (!currentResultKeywords) {
@@ -53,36 +52,25 @@
             }
             
             // When keywords entered, but not submitted, return current search keywords on page turn
-                $scope.typedInKeywords = currentResultKeywords;
-            
-            r = {
-                searchMethod: "flickr.photos.search",
-                tags: encodeURIComponent(currentResultKeywords),
-                apiKey: "d70b688ec8e8dccee57c3fc1232c72b4",
-                perPage: $scope.resultsPerPage,
-                extras: "url_q",
-                format: "json",
-                jsoncallback: "JSON_CALLBACK",
-                media: "photos",
-                sorting: "relevance"
-                
-            }
-            
+            $scope.typedInKeywords = currentResultKeywords;
+
             $scope.searchFailed = false;
             $scope.pictures = [];
-            $scope.url = "https://api.flickr.com/services/rest/"
-                        +"?method=" + r.searchMethod
-                        + "&api_key=" + r.apiKey
-                        + "&media="+ r.media
-                        + "&extras=" + r.extras
-                        + "&sort=" + r.sorting
-                        + "&per_page=" + r.perPage
-                        + "&format=" + r.format
-                        + "&jsoncallback=" + r.jsoncallback
-                        + "&tags=" + r.tags
-                        + "&page=" + pageNumber;
             
-            $http.jsonp($scope.url)
+            $http.jsonp("https://api.flickr.com/services/rest/", {
+                params : {
+                    method: "flickr.photos.search",
+                    tags: currentResultKeywords,
+                    api_key: "d70b688ec8e8dccee57c3fc1232c72b4",
+                    per_page: $scope.resultsPerPage,
+                    extras: "url_q",
+                    format: "json",
+                    jsoncallback: "JSON_CALLBACK",
+                    media: "photos",
+                    sort: "relevance",
+                    page: pageNumber
+                }
+            })
             .success(function(results, status, headers, config) {
                 if (results.photos.photo.length === 0) {
                     $scope.showNav = false;
