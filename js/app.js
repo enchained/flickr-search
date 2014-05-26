@@ -89,10 +89,10 @@
             } else {
                 if (newSearchKeywords && (newSearchKeywords !== $scope.searchKeywords)) {
                     newSearchKeywords = $scope.searchKeywords;
-//                    if ($scope.currentPage !== 1) {
+                    if ($scope.currentPage !== 1) {
                         $scope.currentPage = 1;
                         return;
-//                    }
+                    }
                     $scope.fetchOnePage($scope.currentPage);
                 } else if (newSearchKeywords && (newSearchKeywords === $scope.searchKeywords)) {
                     newSearchKeywords = $scope.searchKeywords;
