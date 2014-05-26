@@ -6,7 +6,9 @@
    
     app.controller('SearchController', ['$scope', '$http', function ($scope, $http) {
         var currentResultKeywords, prevResultKeywords;
-        
+        $scope.resultsPerPage = 12;
+        $scope.maxNavLength = 9;
+        $scope.totalResultsLimit = 4020;
         
         // Setting current page anywhere will trigger search results loading
         $scope.$watch('currentPage', function() {
@@ -45,11 +47,12 @@
         
         $scope.loadSelectedPage = function(pageNumber) {
             
-            $scope.resultsPerPage = 12;
-            
             if (!currentResultKeywords) {
                 return;
             }
+            
+
+            
             
             // When keywords entered, but not submitted, return current search keywords on page turn
             $scope.typedInKeywords = currentResultKeywords;
@@ -95,11 +98,10 @@
                 
                 $scope.totalResults = parseInt(results.photos.total);
                 // For some reason even if there is thousands of pages in the Flickr response, it shows only the first 335, after that iterates page number 335 over and over. 4020 is 335 times 12.
-                if ($scope.totalResults > 4020) {
-                    $scope.totalResults = 4020;
+                if ($scope.totalResults > $scope.totalResultsLimit) {
+                    $scope.totalResults = $scope.totalResultsLimit;
                 }
                 
-                $scope.maxNavLength = 9;
                 $scope.showNav = true;
                 $scope.searchFailed = false;
                 
