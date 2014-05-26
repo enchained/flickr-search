@@ -40,7 +40,6 @@
                     $scope.pictureRows = [];
                     $scope.showMessage = true;
                     $scope.searchForm.$setPristine();
-                    $scope.$apply();
                     return;
                 }
                 angular.forEach(results.photos.photo, function(value, key) {

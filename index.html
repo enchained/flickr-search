@@ -29,8 +29,9 @@
             </div>
         </div>
         
-        <div id="error" class="alert alert-danger" ng-show="showMessage" ng-model="message">
-        {{message}}
+        <div id="error" class="alert alert-danger alert-dismissable" ng-show="showMessage" ng-model="message">
+            <button type="button" class="close" data-dismiss="alert" ng-click="showMessage = false" aria-hidden="true">&times;</button>
+            {{message}}
         </div>
         
         <div class="container-fluid">
